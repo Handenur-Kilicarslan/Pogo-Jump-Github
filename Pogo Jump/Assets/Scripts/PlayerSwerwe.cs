@@ -6,10 +6,15 @@ using UnityEngine.UI;
 
 public class PlayerSwerwe : MonoBehaviour
 {
+    private Touch touch = new Touch();
+    private float doubleTapTimer;
+    private int tapCount;
+
     private Rigidbody myRb;
     public Animator playerAnim;
     private bool tapToStart;
     public static bool endGame;
+    public Transform endingStartPoint;
 
     public bool isMoving = true; //jump kısımlarında bunu kapatıp devam ettiricem
 
@@ -34,29 +39,22 @@ public class PlayerSwerwe : MonoBehaviour
     {
         _swerveInputSystem = GetComponent<SwerveInputSystem>();
     }
-
     void Start()
     {
         DOTween.Init();
         myRb = GetComponent<Rigidbody>();
-
         tapToStart = false;
         endGame = false;
-        // energyBarImage = GameObject.Find("DolanEnerjiBarı").gameObject.GetComponent<Image>();
     }
-
-
     void Update()
     {
         float swerveAmount = Time.deltaTime * swerveSpeed * _swerveInputSystem.MoveFactorX;
         swerveAmount = Mathf.Clamp(swerveAmount, -maxSwerveAmount, maxSwerveAmount);
-
         if (tapToStart && !endGame && isMoving) //hareket
         {
-            //icemanAnim.SetBool("Running", true); 
+            //playerAnim.SetBool("Running", true); 
             transform.Translate(swerveAmount, 0, 0);
             gameObject.transform.Translate(Vector3.forward * Time.deltaTime * speed);
-
         }
         if (Input.GetMouseButtonDown(0) && !tapToStart) //taptostart
         {
@@ -64,11 +62,21 @@ public class PlayerSwerwe : MonoBehaviour
             UıManager.instance.TapToStartUI();
             tapToStart = true;
         }
-        if (energyCount == 5)
+        if (energyCount == 5) //nereye zıplayacak
         {
             Debug.Log("Bu kısma girdik ve enerji sayısı şu " + energyCount);
             EndJumpPlaceX = energyCount;  //10x kısmına zıplasın
             energyBarImage.DOFillAmount(0.240f, 0.3f).SetEase(Ease.Linear);
+        }
+        
+
+        foreach(Touch touch in Input.touches)
+        {
+            if (touch.tapCount == 2)
+            {
+                Debug.Log("Touch sayısı : " +  touch.tapCount);
+                StartCoroutine(FlipJump(myRb, 20f));
+            }
         }
 
     }
@@ -76,27 +84,24 @@ public class PlayerSwerwe : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.tag == "Ground" && !endGame)
-            StartCoroutine(ConstantJump(myRb, impulsForce)); // yere değdiği sürece zıplasın
-        
-        if (other.gameObject.tag == "FlipJump")
-        {
-            StartCoroutine(MiddleJump(myRb, 105f));
-        }
 
         if (other.gameObject.tag == "Obstacle")
         {
+
             GameManager.instance.GameOver();
+            transform.position = new Vector3(transform.position.x, 44f, transform.position.z);
+            //playerAnim.SetBool("ölmeAnim", true);
             endGame = true;
         }
 
         if (other.gameObject.tag == "EndTrigger")
         {
             GameManager.instance.Win();
+            playerAnim.SetBool("flipJump", true);
 
-            EndFlyJump10(transform);
-            Debug.Log("hadi annecim zıpla");
-            transform.DOMove(new Vector3(0.8f, 130, 1274), 3.5f);
+            Transform endJumpTransform = GameManager.instance.EndJumpPlaceXPosition(energyCount);
+
+            StartCoroutine(EndFlyJumpX(transform, endJumpTransform));
             endGame = true;
         }
 
@@ -115,47 +120,59 @@ public class PlayerSwerwe : MonoBehaviour
         if (other.gameObject.tag == "JumpTrigger")
         {
             Debug.Log("trigger'a dokundu");
-            playerAnim.SetBool("flipJump", true);
-            StartCoroutine(MiddleJump(myRb, 20f));
+            StartCoroutine(FlipJump(myRb, 20f));
         }
     }
 
 
 
-    void LeftSwp(Transform player)
+    public IEnumerator FlipJump(Rigidbody myRb, float upForce)
     {
-        player.transform.DOMoveX(0, 0.5f);
-    }
-
-    void RightSwp(Transform player)
-    {
-        player.transform.DOMoveX(1, 0.5f);
-    }
-
-    public IEnumerator FlipAndJump(Rigidbody rb)
-    {
-
-
-        rb.constraints = RigidbodyConstraints.None;
-        rb.AddForce(Vector3.up * 75f, ForceMode.Impulse);
-        yield return new WaitForSeconds(0.5f);
-
-        transform.DOLocalRotate(new Vector3(320, 0, 0), 1f, RotateMode.Fast);
-
-        rb.constraints = RigidbodyConstraints.FreezeRotationZ;
-
-    }
-
-    public IEnumerator MiddleJump(Rigidbody myRb, float upForce)
-    {
-        //transform.DOMoveY(transform.position.y + 6f, 1f).OnComplete(() => transform.DOMoveY(transform.position.y - 5f, 1f));
-
+        playerAnim.SetBool("flipJump", true);
         myRb.AddForce(Vector3.up * upForce, ForceMode.Impulse);
-        yield return new WaitForSeconds(.1f);
+        yield return new WaitForSeconds(1f);
+
         myRb.AddForce(Vector3.down * 55f, ForceMode.Impulse);
+        playerAnim.SetBool("flipJump", false);
+        yield return new WaitForSeconds(.4f);
+
+        transform.position = new Vector3(transform.position.x, 44f, transform.position.z);
+        //havada uçma sorunu çözümü
+
 
     }
 
+    public IEnumerator EndFlyJumpX(Transform transform, Transform konum) //ikinci paramereyi de ver nereye zıplayacağını bilsin
+    {
+        Debug.Log("e zıpla artık");
+        isMoving = false;
+
+        yield return new WaitForSeconds(.3f);
+        playerAnim.SetBool("flipJump", true);
+        if (energyCount <= 4)
+        {
+            transform.DOMove(konum.position, 3.5f).SetEase(Ease.OutBack);
+        }
+        else if (energyCount > 4 && energyCount < 7)
+        {
+            transform.DOMove(konum.position, 4.5f);
+        }
+        else if (energyCount <= 7 && energyCount < 10)
+        {
+            transform.DOMove(konum.position, 5.5f);
+        }
+
+        playerAnim.SetBool("flipJump", false);
+
+        //transform.DORotate(new Vector3(0, -120, 0), 2f);
+    }
+
+}
+
+/*
+    if(other.gameObject.tag == "Ground" && !endGame)
+        StartCoroutine(ConstantJump(myRb, impulsForce)); // yere değdiği sürece zıplasın
+ 
     public IEnumerator ConstantJump(Rigidbody rb, float impulsForce)
     {
         rb.velocity = Vector3.zero;
@@ -164,29 +181,16 @@ public class PlayerSwerwe : MonoBehaviour
         rb.AddForce(Vector3.down * downforce, ForceMode.Impulse);
     }
 
-
-    public IEnumerator EndFlyJump10(Transform transform) //ikinci paramereyi de ver nereye zıplayacağını bilsin
-    {
-        Debug.Log("e zıpla artık");
-        isMoving = false;
-        transform.DOMoveY(130, 2f); //dünya konumuna ayarla child konumda
-
-        yield return new WaitForSeconds(0.1f);
-    }
-    /*
-    public IEnumerator FlipAndJump(Rigidbody rb)
+     public IEnumerator AnotherJump(Rigidbody rb)
     {
 
         rb.constraints = RigidbodyConstraints.None;
         rb.AddForce(Vector3.up * 75f, ForceMode.Impulse);
         yield return new WaitForSeconds(0.5f);
-
         transform.DOLocalRotate(new Vector3(320, 0, 0), 1f, RotateMode.Fast);
-        //transform.DOLocalRotate(new Vector3(0f, 90f, 0f), 5f).SetRelative(true).OnComplete(() => Destroy(transform.gameObject));
-        //transform.Rotate(-5f * Time.deltaTime, 0, 0);
 
         rb.constraints = RigidbodyConstraints.FreezeRotationZ;
 
     }
-    */
-}
+
+ */
