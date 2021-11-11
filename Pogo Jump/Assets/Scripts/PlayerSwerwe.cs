@@ -25,8 +25,9 @@ public class PlayerSwerwe : MonoBehaviour
     public float downforce = 10f;
     public float speed = 25f;
 
+
     [Header("Level Collectables")]
-    public Text energyCountText;
+   // public Text energyCountText;
     public Image energyBarImage;
     private int energyCount;
 
@@ -43,6 +44,7 @@ public class PlayerSwerwe : MonoBehaviour
     {
         DOTween.Init();
         myRb = GetComponent<Rigidbody>();
+        ResetPlayerPositionY(transform);
         tapToStart = false;
         endGame = false;
     }
@@ -84,12 +86,13 @@ public class PlayerSwerwe : MonoBehaviour
 
     private void OnCollisionEnter(Collision other)
     {
+        
 
         if (other.gameObject.tag == "Obstacle")
         {
 
             GameManager.instance.GameOver();
-            transform.position = new Vector3(transform.position.x, 44f, transform.position.z);
+            ResetPlayerPositionY(transform);
             //playerAnim.SetBool("ölmeAnim", true);
             endGame = true;
         }
@@ -99,6 +102,9 @@ public class PlayerSwerwe : MonoBehaviour
             GameManager.instance.Win();
             playerAnim.SetBool("flipJump", true);
 
+            ResetPlayerPositionY(transform);
+            Debug.Log("Energy count " + energyCount);
+            energyCount -= 10;
             Transform endJumpTransform = GameManager.instance.EndJumpPlaceXPosition(energyCount);
 
             StartCoroutine(EndFlyJumpX(transform, endJumpTransform));
@@ -107,20 +113,27 @@ public class PlayerSwerwe : MonoBehaviour
 
     }
 
+    
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Energy")
         {
+            Debug.Log("bu energy");
             energyCount++;
-            energyCountText.text = energyCount.ToString();
+            //energyCountText.text = energyCount.ToString();
             Debug.Log(energyCount);
-            Destroy(other.gameObject);
+            
+            other.transform.GetChild(0).gameObject.SetActive(true);
+            other.gameObject.GetComponent<MeshRenderer>().enabled = false;
         }
 
         if (other.gameObject.tag == "JumpTrigger")
         {
             Debug.Log("trigger'a dokundu");
             StartCoroutine(FlipJump(myRb, 20f));
+
+            Handheld.Vibrate();
         }
     }
 
@@ -128,6 +141,7 @@ public class PlayerSwerwe : MonoBehaviour
 
     public IEnumerator FlipJump(Rigidbody myRb, float upForce)
     {
+        transform.position = new Vector3(transform.position.x, 44f, transform.position.z);
         playerAnim.SetBool("flipJump", true);
         myRb.AddForce(Vector3.up * upForce, ForceMode.Impulse);
         yield return new WaitForSeconds(1f);
@@ -138,7 +152,6 @@ public class PlayerSwerwe : MonoBehaviour
 
         transform.position = new Vector3(transform.position.x, 44f, transform.position.z);
         //havada uçma sorunu çözümü
-
 
     }
 
@@ -153,11 +166,11 @@ public class PlayerSwerwe : MonoBehaviour
         {
             transform.DOMove(konum.position, 3.5f).SetEase(Ease.OutBack);
         }
-        else if (energyCount > 4 && energyCount < 7)
+        else if (energyCount > 4 && energyCount <= 7)
         {
             transform.DOMove(konum.position, 4.5f);
         }
-        else if (energyCount <= 7 && energyCount < 10)
+        else if (energyCount > 7 && energyCount < 10)
         {
             transform.DOMove(konum.position, 5.5f);
         }
@@ -167,6 +180,15 @@ public class PlayerSwerwe : MonoBehaviour
         //transform.DORotate(new Vector3(0, -120, 0), 2f);
     }
 
+    public IEnumerator DelayThings(float delayTime)
+    {
+        yield return new WaitForSeconds(delayTime);
+    }
+
+    void ResetPlayerPositionY(Transform transform)
+    {
+        transform.position = new Vector3(transform.position.x, 44f, transform.position.z);
+    }
 }
 
 /*

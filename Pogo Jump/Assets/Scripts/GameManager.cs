@@ -21,6 +21,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         DOTween.Init();
+        Application.targetFrameRate = 60;
     }
 
     public static GameManager instance;
@@ -69,13 +70,13 @@ public class GameManager : MonoBehaviour
     {
         int n = energyCount;
 
-        endingStartPoint.position = new Vector3(0.8f, 44, 1034.5f); //1x konumu
+        endingStartPoint.position = new Vector3(0.8f, 44, 1035.24f); //1x konumu
 
         //i yi 2 2 arttırabilirim
 
         for (int i = 0; i < n; i++)
         {
-            endingStartPoint.position += new Vector3(0, 16f, 44.6f); //2şerliçıksın
+            endingStartPoint.position += new Vector3(0, 7.5f, 44.6f); //2şerliçıksın
 
             //endingStartPoint.position += new Vector3(0, 7.6f, 22.3f); //iki yer arası mesafe
         }
