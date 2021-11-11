@@ -7,6 +7,15 @@ using DG.Tweening;
 
 public class GameManager : MonoBehaviour
 {
+    [Header("Single Scene Data")]
+    public Level[] levels;
+    public GameStatus status = GameStatus.empty;
+    public int whichLevel = 0;
+
+    [Header("Player and Area in Levels")]
+    public GameObject gameArea;
+    public GameObject player;
+
     [Header("Cameras")]
     public GameObject PlayCam;
     public GameObject FailCam;
@@ -33,7 +42,28 @@ public class GameManager : MonoBehaviour
 
     void Update()
     {
+        switch (status)
+        {
+            case GameStatus.empty:
 
+                //bir prefabı var olan objeleri sahneye ekleyeceğim
+                whichLevel = PlayerPrefs.GetInt("whichLevel");
+
+
+                status = GameStatus.initalize;
+
+                break;
+            case GameStatus.initalize:
+                break;
+            case GameStatus.start:
+                break;
+            case GameStatus.stay:
+                break;
+            case GameStatus.restart:
+                break;
+            case GameStatus.next:
+                break;
+        }
     }
 
     public void StartGame()
@@ -84,6 +114,32 @@ public class GameManager : MonoBehaviour
         return endingStartPoint;
     }
 
+    /*
+    public void Next()
+    {
+
+        whichLevel++;
+        PlayerPrefs.SetInt("whichLevel", whichLevel);
+
+        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+
+        //SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+        //buildIndex'i tutturuyotuz.
+         //Olası farklı senaryolarda -next level olmayışı gibi- sıkıntı çıkarmasın diye 
+
+    //iceCubeCount = 0;// next level için küp sayısını 0'ladım.
+    status = GameStatus.empty; // tekrar empty'e çekiyoruz.
+
+        if (whichLevel >= levels.Length)
+        {
+            whichLevel--;
+            PlayerPrefs.SetInt("randomLevel", 1);
+        }
+    }
+     */
+
+
+
 
     /*
     public IEnumerator FlipAndJump(Rigidbody rb)
@@ -98,7 +154,7 @@ public class GameManager : MonoBehaviour
         //transform.Rotate(-5f * Time.deltaTime, 0, 0);
 
         rb.constraints = RigidbodyConstraints.FreezeRotationZ;
-        
+
         //transform.DOMoveY(transform.position.y + 6f, 1f).OnComplete(() => transform.DOMoveY(transform.position.y - 5f, 1f));
     }
     */
