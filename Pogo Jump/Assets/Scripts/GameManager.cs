@@ -100,7 +100,7 @@ public class GameManager : MonoBehaviour
     {
         int n = energyCount;
 
-        endingStartPoint.position = new Vector3(0.8f, 44, 1035.24f); //1x konumu
+        endingStartPoint.position = new Vector3(0.8f, 44, 1034.24f); //1x konumu
 
         //i yi 2 2 arttırabilirim
 

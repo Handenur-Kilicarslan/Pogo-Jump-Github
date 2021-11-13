@@ -105,6 +105,8 @@ public class PlayerSwerwe : MonoBehaviour
             ResetPlayerPositionY(transform);
             Debug.Log("Energy count " + energyCount);
             energyCount -= 10;
+
+            Debug.Log("Energy count " + energyCount);
             Transform endJumpTransform = GameManager.instance.EndJumpPlaceXPosition(energyCount);
 
             StartCoroutine(EndFlyJumpX(transform, endJumpTransform));
@@ -170,7 +172,7 @@ public class PlayerSwerwe : MonoBehaviour
         {
             transform.DOMove(konum.position, 4.5f);
         }
-        else if (energyCount > 7 && energyCount < 10)
+        else if (energyCount > 7 && energyCount < 20)
         {
             transform.DOMove(konum.position, 5.5f);
         }
