@@ -4,9 +4,10 @@ using UnityEngine;
 
 public class ParticleController : MonoBehaviour
 {
+    private int i = 0;
 
-
-    public ParticleSystem particle;
+    public GameObject particle;
+    public ParticleSystem particleSystem1;
     // Start is called before the first frame update
     void Start()
     {
@@ -19,16 +20,22 @@ public class ParticleController : MonoBehaviour
         
     }
 
-    private void OnTriggerExit(Collider other)
+    private void OnTriggerEnter(Collider other)
     {
         if (other.gameObject.tag == "Ground")
         {
-            Debug.Log("Ground");
-            particle.Play();
+            Debug.Log("Ground "+ i);
+            i++;
+            particleSystem1.Play();
+            //particleSystem1.GetComponent<ParticleSystem>().Play();
+            //particle.SetActive(true);
+
         }
         else
         {
-            particle.Stop();
+            particleSystem1.Stop();
+            //particleSystem1.GetComponent<ParticleSystem>().Pause();
+            //particle.SetActive(false);
         }
     }
 }

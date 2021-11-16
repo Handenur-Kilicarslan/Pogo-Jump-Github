@@ -27,7 +27,8 @@ public class PlayerSwerwe : MonoBehaviour
 
 
     [Header("Level Collectables")]
-   // public Text energyCountText;
+    // public Text energyCountText;
+    public GameObject particleConfetti;
     public Image energyBarImage;
     private int energyCount;
 
@@ -47,6 +48,8 @@ public class PlayerSwerwe : MonoBehaviour
         ResetPlayerPositionY(transform);
         tapToStart = false;
         endGame = false;
+        particleConfetti.gameObject.SetActive(false);
+
     }
     void Update()
     {
@@ -100,6 +103,7 @@ public class PlayerSwerwe : MonoBehaviour
         if (other.gameObject.tag == "EndTrigger")
         {
             GameManager.instance.Win();
+            particleConfetti.gameObject.SetActive(true);
             playerAnim.SetBool("flipJump", true);
 
             ResetPlayerPositionY(transform);
