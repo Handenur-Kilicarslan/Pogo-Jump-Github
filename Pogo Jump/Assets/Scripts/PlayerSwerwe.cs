@@ -6,41 +6,51 @@ using UnityEngine.UI;
 
 public class PlayerSwerwe : MonoBehaviour
 {
-    private Touch touch = new Touch();
-    private float doubleTapTimer;
-    private int tapCount;
-
-    private Rigidbody myRb;
+    [Header("Animations")]
     public Animator playerAnim;
-    private bool tapToStart;
+
+    [Header("Booleans")]
     public static bool endGame;
+    private bool isMoving = true; //jump kısımlarında bunu kapatıp devam ettiricem
+    private bool tapToStart;
+    public static bool animJumpBool = false;
+
+    [Header("Locations")]
     public Transform endingStartPoint;
-
-    public bool isMoving = true; //jump kısımlarında bunu kapatıp devam ettiricem
-
     public int EndJumpPlaceX; // Kaç x'e Zıplayacak
 
+    
     [Header("Player Movement")]
+    private Rigidbody myRb;
     public float impulsForce = 8f;
     public float downforce = 10f;
     public float speed = 25f;
 
 
-    [Header("Level Collectables")]
-    // public Text energyCountText;
+    [Header("Level Objects")]
     public GameObject particleConfetti;
     public Image energyBarImage;
     private int energyCount;
+    // public Text energyCountText;
+
+
+    [Header("Tryings for Touch")]
+    private Touch touch = new Touch();
+    private float doubleTapTimer;
+    private int tapCount;
 
     [Header("Swerwe Manager")]
     [SerializeField] private float swerveSpeed = 4f;
     [SerializeField] private float maxSwerveAmount = 4f;
     private SwerveInputSystem _swerveInputSystem;
 
+
+
     private void Awake()
     {
         _swerveInputSystem = GetComponent<SwerveInputSystem>();
     }
+
     void Start()
     {
         DOTween.Init();
@@ -51,22 +61,27 @@ public class PlayerSwerwe : MonoBehaviour
         particleConfetti.gameObject.SetActive(false);
 
     }
+
     void Update()
     {
         float swerveAmount = Time.deltaTime * swerveSpeed * _swerveInputSystem.MoveFactorX;
         swerveAmount = Mathf.Clamp(swerveAmount, -maxSwerveAmount, maxSwerveAmount);
+
+
         if (tapToStart && !endGame && isMoving) //hareket
         {
             //playerAnim.SetBool("Running", true); 
             transform.Translate(swerveAmount, 0, 0);
             gameObject.transform.Translate(Vector3.forward * Time.deltaTime * speed);
         }
+
         if (Input.GetMouseButtonDown(0) && !tapToStart) //taptostart
         {
             GameManager.instance.StartGame();
             UıManager.instance.TapToStartUI();
             tapToStart = true;
         }
+
         if (energyCount == 5) //nereye zıplayacak
         {
             Debug.Log("Bu kısma girdik ve enerji sayısı şu " + energyCount);
@@ -90,7 +105,6 @@ public class PlayerSwerwe : MonoBehaviour
     private void OnCollisionEnter(Collision other)
     {
         
-
         if (other.gameObject.tag == "Obstacle")
         {
 
@@ -107,10 +121,12 @@ public class PlayerSwerwe : MonoBehaviour
             playerAnim.SetBool("flipJump", true);
 
             ResetPlayerPositionY(transform);
+
             Debug.Log("Energy count " + energyCount);
             energyCount -= 10;
 
             Debug.Log("Energy count " + energyCount);
+
             Transform endJumpTransform = GameManager.instance.EndJumpPlaceXPosition(energyCount);
 
             StartCoroutine(EndFlyJumpX(transform, endJumpTransform));
@@ -136,6 +152,8 @@ public class PlayerSwerwe : MonoBehaviour
 
         if (other.gameObject.tag == "JumpTrigger")
         {
+            ResetPlayerPositionY(transform);
+            animJumpBool = true;
             Debug.Log("trigger'a dokundu");
             StartCoroutine(FlipJump(myRb, 20f));
 
@@ -147,6 +165,7 @@ public class PlayerSwerwe : MonoBehaviour
 
     public IEnumerator FlipJump(Rigidbody myRb, float upForce)
     {
+
         transform.position = new Vector3(transform.position.x, 44f, transform.position.z);
         playerAnim.SetBool("flipJump", true);
         myRb.AddForce(Vector3.up * upForce, ForceMode.Impulse);
@@ -159,6 +178,7 @@ public class PlayerSwerwe : MonoBehaviour
         transform.position = new Vector3(transform.position.x, 44f, transform.position.z);
         //havada uçma sorunu çözümü
 
+        animJumpBool = false;
     }
 
     public IEnumerator EndFlyJumpX(Transform transform, Transform konum) //ikinci paramereyi de ver nereye zıplayacağını bilsin
