@@ -75,6 +75,7 @@ public class GameManager : MonoBehaviour
     public void Restart()
     {
         SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+
     }
 
     public void GameOver()
@@ -95,7 +96,8 @@ public class GameManager : MonoBehaviour
     }
 
 
-    //enerji sayısına göre konum dönecek
+    #region Return End Position
+    //Enerji sayısına göre konum dönen fonksiyon
     public Transform EndJumpPlaceXPosition(int energyCount)
     {
         int n = energyCount;
@@ -113,6 +115,7 @@ public class GameManager : MonoBehaviour
 
         return endingStartPoint;
     }
+    #endregion
 
     /*
     public void Next()

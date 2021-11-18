@@ -124,7 +124,7 @@ public class PlayerSwerwe : MonoBehaviour
             ResetPlayerPositionY(transform);
 
             Debug.Log("Energy count " + energyCount);
-            energyCount -= 13;
+            energyCount -= 15;
 
             Debug.Log("Energy count " + energyCount);
 
