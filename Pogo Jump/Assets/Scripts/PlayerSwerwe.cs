@@ -19,20 +19,18 @@ public class PlayerSwerwe : MonoBehaviour
     public Transform endingStartPoint;
     public int EndJumpPlaceX; // Kaç x'e Zıplayacak
 
-    
     [Header("Player Movement")]
     private Rigidbody myRb;
     public float impulsForce = 8f;
     public float downforce = 10f;
     public float speed = 25f;
 
-
-    [Header("Level Objects")]
+    [Header("Level Objects Energy etc.")]
     public GameObject particleConfetti;
     public Image energyBarImage;
     private int energyCount;
+    private float enBarFillFloat = 0; //energy bar filling float
     // public Text energyCountText;
-
 
     [Header("Tryings for Touch")]
     private Touch touch = new Touch();
@@ -43,8 +41,7 @@ public class PlayerSwerwe : MonoBehaviour
     [SerializeField] private float swerveSpeed = 4f;
     [SerializeField] private float maxSwerveAmount = 4f;
     private SwerveInputSystem _swerveInputSystem;
-
-
+    
 
     private void Awake()
     {
@@ -59,14 +56,16 @@ public class PlayerSwerwe : MonoBehaviour
         tapToStart = false;
         endGame = false;
         particleConfetti.gameObject.SetActive(false);
-
     }
 
     void Update()
     {
+        #region Swerwe Movement
         float swerveAmount = Time.deltaTime * swerveSpeed * _swerveInputSystem.MoveFactorX;
         swerveAmount = Mathf.Clamp(swerveAmount, -maxSwerveAmount, maxSwerveAmount);
+        #endregion
 
+        #region Movement & Tap to Start
 
         if (tapToStart && !endGame && isMoving) //hareket
         {
@@ -81,22 +80,24 @@ public class PlayerSwerwe : MonoBehaviour
             UıManager.instance.TapToStartUI();
             tapToStart = true;
         }
+        #endregion
 
-        if (energyCount == 5) //nereye zıplayacak
-        {
-            Debug.Log("Bu kısma girdik ve enerji sayısı şu " + energyCount);
-            EndJumpPlaceX = energyCount;  //10x kısmına zıplasın
-            energyBarImage.DOFillAmount(0.240f, 0.3f).SetEase(Ease.Linear);
-        }
-        
+        #region Touch Try
 
-        foreach(Touch touch in Input.touches)
+        foreach (Touch touch in Input.touches)
         {
             if (touch.tapCount == 2)
             {
                 Debug.Log("Touch sayısı : " +  touch.tapCount);
                 StartCoroutine(FlipJump(myRb, 20f));
             }
+        }
+        #endregion
+
+        if (energyCount == 5) //nereye zıplayacak
+        {
+            Debug.Log("Bu kısma girdik ve enerji sayısı şu " + energyCount);
+            EndJumpPlaceX = energyCount;  //10x kısmına zıplasın
         }
 
     }
@@ -123,7 +124,7 @@ public class PlayerSwerwe : MonoBehaviour
             ResetPlayerPositionY(transform);
 
             Debug.Log("Energy count " + energyCount);
-            energyCount -= 10;
+            energyCount -= 13;
 
             Debug.Log("Energy count " + energyCount);
 
@@ -143,11 +144,16 @@ public class PlayerSwerwe : MonoBehaviour
         {
             Debug.Log("bu energy");
             energyCount++;
-            //energyCountText.text = energyCount.ToString();
             Debug.Log(energyCount);
-            
+
+            enBarFillFloat += 0.04f;
+            energyBarImage.DOFillAmount(enBarFillFloat, 0.3f).SetEase(Ease.Linear);
+
             other.transform.GetChild(0).gameObject.SetActive(true);
             other.gameObject.GetComponent<MeshRenderer>().enabled = false;
+
+
+            //energyCountText.text = energyCount.ToString();
         }
 
         if (other.gameObject.tag == "JumpTrigger")
