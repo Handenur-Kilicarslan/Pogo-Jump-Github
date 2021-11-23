@@ -174,10 +174,10 @@ public class PlayerSwerwe : MonoBehaviour
 
         transform.position = new Vector3(transform.position.x, 44f, transform.position.z);
         playerAnim.SetBool("flipJump", true);
-        myRb.AddForce(Vector3.up * upForce, ForceMode.Impulse);
+        //myRb.AddForce(Vector3.up * upForce, ForceMode.Impulse);
         yield return new WaitForSeconds(1f);
 
-        myRb.AddForce(Vector3.down * 55f, ForceMode.Impulse);
+        myRb.AddForce(Vector3.forward * 35f, ForceMode.Impulse);
         playerAnim.SetBool("flipJump", false);
         yield return new WaitForSeconds(.4f);
 
