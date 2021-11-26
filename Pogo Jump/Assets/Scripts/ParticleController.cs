@@ -24,7 +24,7 @@ public class ParticleController : MonoBehaviour
         
         if (other.gameObject.tag == "Ground")
         {
-            Debug.Log("Ground "+ i);
+            //Debug.Log("Ground "+ i);
             i++;
             particleSystem1.Play();
 

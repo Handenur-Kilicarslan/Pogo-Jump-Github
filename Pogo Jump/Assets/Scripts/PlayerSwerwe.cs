@@ -11,9 +11,10 @@ public class PlayerSwerwe : MonoBehaviour
 
     [Header("Booleans")]
     public static bool endGame;
-    private bool isMoving = true; //jump kısımlarında bunu kapatıp devam ettiricem
+    private bool isMoving = true; //son jump kısımlarında bunu kapatıp devam ettiricem
     private bool tapToStart;
     public static bool animJumpBool = false;
+    private bool isFlip = false;
 
     [Header("Locations")]
     public Transform endingStartPoint;
@@ -60,20 +61,45 @@ public class PlayerSwerwe : MonoBehaviour
 
     void Update()
     {
+        Debug.Log("isFlip : " + isFlip);
+
         #region Swerwe Movement
         float swerveAmount = Time.deltaTime * swerveSpeed * _swerveInputSystem.MoveFactorX;
         swerveAmount = Mathf.Clamp(swerveAmount, -maxSwerveAmount, maxSwerveAmount);
         #endregion
-
-        #region Movement & Tap to Start
-
-        if (tapToStart && !endGame && isMoving) //hareket
+         
+        #region Movement 
+        
+        if (tapToStart && !endGame && isMoving && Input.GetMouseButton(0)) //hareket
         {
-            //playerAnim.SetBool("Running", true); 
             transform.Translate(swerveAmount, 0, 0);
-            gameObject.transform.Translate(Vector3.forward * Time.deltaTime * speed);
+            Movement();
+            isFlip = false;
         }
 
+        if (tapToStart && !endGame && isMoving && !isFlip && !Input.GetMouseButton(0)) //  
+        {
+            isFlip = true;
+        }
+
+        
+
+        if (isFlip == true)
+        {
+            StartCoroutine(FlipJump(myRb, 25f));
+            
+            //ResetPlayerPositionY(transform);
+            
+            isFlip = false;
+        }
+
+
+
+        #endregion
+
+
+
+        #region  Tap to Start
         if (Input.GetMouseButtonDown(0) && !tapToStart) //taptostart
         {
             GameManager.instance.StartGame();
@@ -152,12 +178,12 @@ public class PlayerSwerwe : MonoBehaviour
             other.transform.GetChild(0).gameObject.SetActive(true);
             other.gameObject.GetComponent<MeshRenderer>().enabled = false;
 
-
             //energyCountText.text = energyCount.ToString();
         }
 
         if (other.gameObject.tag == "JumpTrigger")
         {
+            Debug.Log("Jump Trigger");
             ResetPlayerPositionY(transform);
             animJumpBool = true;
             Debug.Log("trigger'a dokundu");
@@ -168,20 +194,26 @@ public class PlayerSwerwe : MonoBehaviour
     }
 
 
+    void Movement()
+    {
+        gameObject.transform.Translate(Vector3.forward * Time.deltaTime * speed);
+    }
 
     public IEnumerator FlipJump(Rigidbody myRb, float upForce)
     {
+        Debug.Log("Flip Jump Fonksiyonu");
 
         transform.position = new Vector3(transform.position.x, 44f, transform.position.z);
         playerAnim.SetBool("flipJump", true);
-        //myRb.AddForce(Vector3.up * upForce, ForceMode.Impulse);
+
         yield return new WaitForSeconds(1f);
 
-        myRb.AddForce(Vector3.forward * 35f, ForceMode.Impulse);
+        //myRb.AddForce(Vector3.forward * 35f, ForceMode.Impulse);
+
         playerAnim.SetBool("flipJump", false);
         yield return new WaitForSeconds(.4f);
 
-        transform.position = new Vector3(transform.position.x, 44f, transform.position.z);
+        transform.position = new Vector3(transform.position.x, 46f, transform.position.z);
         //havada uçma sorunu çözümü
 
         animJumpBool = false;
@@ -215,11 +247,17 @@ public class PlayerSwerwe : MonoBehaviour
     public IEnumerator DelayThings(float delayTime)
     {
         yield return new WaitForSeconds(delayTime);
+
+        playerAnim.SetBool("flipJump", false);
+
+        isFlip = false;
+
+        animJumpBool = false;
     }
 
     void ResetPlayerPositionY(Transform transform)
     {
-        transform.position = new Vector3(transform.position.x, 44f, transform.position.z);
+        transform.position = new Vector3(transform.position.x, 46f, transform.position.z);
     }
 }
 
