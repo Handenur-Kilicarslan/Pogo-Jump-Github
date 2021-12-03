@@ -81,6 +81,7 @@ public class PlayerSwerwe : MonoBehaviour
         else if(tapToStart && !endGame && isMoving && isFlip && !Input.GetMouseButton(0))
         {
             Debug.Log("Zıplaması için gereken kısım");
+             
             StartCoroutine(FlipJump(myRb, 35f));
             isFlip = false;
         }
@@ -192,15 +193,21 @@ public class PlayerSwerwe : MonoBehaviour
     {
         Debug.Log("Flip Jump Fonksiyonu");
         ResetPlayerPositionY2(transform, 44f);
-        
-        myRb.AddForce(Vector3.forward * 75f, ForceMode.Impulse);    
         playerAnim.SetBool("flipJump", true);
+        
+        yield return new WaitForSeconds(.5f);
 
-        yield return new WaitForSeconds(1f);
+        myRb.AddForce(Vector3.forward * 500f, ForceMode.VelocityChange);   
+        //myRb.AddForce(new Vector3(0,400f,0));
+        //myRb.AddForce(Vector3.forward * 500f);
+
+        myRb.velocity = new Vector3(0,100,0);
+
+        yield return new WaitForSeconds(.4f);
 
         playerAnim.SetBool("flipJump", false);
 
-        yield return new WaitForSeconds(.4f);
+        yield return new WaitForSeconds(.5f);
 
         ResetPlayerPositionY2(transform, 44f); //havada uçma sorunu çözümü
         animJumpBool = false;

@@ -12,6 +12,7 @@ TagManager:
   - FxTemporaire
   - Energy
   - EndTrigger
+  - AnimTrigger
   layers:
   - Default
   - TransparentFX
