@@ -1,4 +1,5 @@
-﻿using DG.Tweening;
+﻿
+using DG.Tweening;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -74,29 +75,15 @@ public class PlayerSwerwe : MonoBehaviour
         {
             transform.Translate(swerveAmount, 0, 0);
             Movement();
-            isFlip = false;
-        }
 
-        /*
-        if (tapToStart && !endGame && isMoving && !isFlip && !Input.GetMouseButton(0)) //  
-        {
             isFlip = true;
-            
         }
-        
-
-        if (isFlip == true)
+        else if(tapToStart && !endGame && isMoving && isFlip && !Input.GetMouseButton(0))
         {
-            
+            Debug.Log("Zıplaması için gereken kısım");
             StartCoroutine(FlipJump(myRb, 35f));
-            
-            //ResetPlayerPositionY(transform);
-
             isFlip = false;
         }
-
-        */
-
         #endregion
 
 
@@ -204,23 +191,18 @@ public class PlayerSwerwe : MonoBehaviour
     public IEnumerator FlipJump(Rigidbody myRb, float upForce)
     {
         Debug.Log("Flip Jump Fonksiyonu");
-
-        transform.position = new Vector3(transform.position.x, 44f, transform.position.z);
-
-        myRb.AddForce(Vector3.forward * 35f, ForceMode.Impulse);
-        myRb.AddForce(Vector3.up * upForce, ForceMode.Impulse);
+        ResetPlayerPositionY2(transform, 44f);
+        
+        myRb.AddForce(Vector3.forward * 75f, ForceMode.Impulse);    
         playerAnim.SetBool("flipJump", true);
 
         yield return new WaitForSeconds(1f);
-
 
         playerAnim.SetBool("flipJump", false);
 
         yield return new WaitForSeconds(.4f);
 
-        transform.position = new Vector3(transform.position.x, 46f, transform.position.z);
-        //havada uçma sorunu çözümü
-
+        ResetPlayerPositionY2(transform, 44f); //havada uçma sorunu çözümü
         animJumpBool = false;
     }
 
@@ -264,6 +246,11 @@ public class PlayerSwerwe : MonoBehaviour
     {
         transform.position = new Vector3(transform.position.x, 46f, transform.position.z);
     }
+
+    void ResetPlayerPositionY2(Transform transform, float y)
+    {
+        transform.position = new Vector3(transform.position.x, y, transform.position.z);
+    }
 }
 
 /*
@@ -291,3 +278,22 @@ public class PlayerSwerwe : MonoBehaviour
     }
 
  */
+
+
+ /* playerAnim.SetBool("flipJump", true);
+    DelayThings(2f);
+    playerAnim.SetBool("flipJump",false);
+*/    
+
+  
+/*
+if (tapToStart && !endGame && isMoving && !isFlip && !Input.GetMouseButton(0)) //  
+{
+    isFlip = true;
+}
+if (isFlip == true)
+{   
+    StartCoroutine(FlipJump(myRb, 35f));
+    isFlip = false;
+}
+*/
