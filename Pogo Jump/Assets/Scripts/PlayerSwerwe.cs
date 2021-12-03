@@ -80,16 +80,17 @@ public class PlayerSwerwe : MonoBehaviour
         if (tapToStart && !endGame && isMoving && !isFlip && !Input.GetMouseButton(0)) //  
         {
             isFlip = true;
+            
         }
-
         
 
         if (isFlip == true)
         {
-            StartCoroutine(FlipJump(myRb, 25f));
+            
+            StartCoroutine(FlipJump(myRb, 35f));
             
             //ResetPlayerPositionY(transform);
-            
+
             isFlip = false;
         }
 
@@ -204,13 +205,16 @@ public class PlayerSwerwe : MonoBehaviour
         Debug.Log("Flip Jump Fonksiyonu");
 
         transform.position = new Vector3(transform.position.x, 44f, transform.position.z);
+
+        myRb.AddForce(Vector3.forward * 35f, ForceMode.Impulse);
+        myRb.AddForce(Vector3.up * upForce, ForceMode.Impulse);
         playerAnim.SetBool("flipJump", true);
 
         yield return new WaitForSeconds(1f);
 
-        //myRb.AddForce(Vector3.forward * 35f, ForceMode.Impulse);
 
         playerAnim.SetBool("flipJump", false);
+
         yield return new WaitForSeconds(.4f);
 
         transform.position = new Vector3(transform.position.x, 46f, transform.position.z);
