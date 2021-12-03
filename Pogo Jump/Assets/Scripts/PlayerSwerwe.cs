@@ -77,6 +77,7 @@ public class PlayerSwerwe : MonoBehaviour
             isFlip = false;
         }
 
+        /*
         if (tapToStart && !endGame && isMoving && !isFlip && !Input.GetMouseButton(0)) //  
         {
             isFlip = true;
@@ -94,7 +95,7 @@ public class PlayerSwerwe : MonoBehaviour
             isFlip = false;
         }
 
-
+        */
 
         #endregion
 
