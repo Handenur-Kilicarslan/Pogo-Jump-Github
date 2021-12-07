@@ -14,7 +14,6 @@ public class ObstacleMovement : MonoBehaviour
         GoThere();
     }
 
-   
 
     void GoThere()
     {

@@ -140,10 +140,11 @@ public class PlayerSwerwe : MonoBehaviour
             ResetPlayerPositionY(transform);
 
             Debug.Log("Energy count " + energyCount);
-            energyCount -= 15;
+            energyCount /= 3;
 
             Debug.Log("Energy count " + energyCount);
 
+            //konum döndüren fonksiyon
             Transform endJumpTransform = GameManager.instance.EndJumpPlaceXPosition(energyCount);
 
             StartCoroutine(EndFlyJumpX(transform, endJumpTransform));
@@ -192,16 +193,13 @@ public class PlayerSwerwe : MonoBehaviour
     public IEnumerator FlipJump(Rigidbody myRb, float upForce)
     {
         Debug.Log("Flip Jump Fonksiyonu");
-        ResetPlayerPositionY2(transform, 44f);
+        //ResetPlayerPositionY2(transform, 44f);
         playerAnim.SetBool("flipJump", true);
         
         yield return new WaitForSeconds(.5f);
 
         myRb.AddForce(Vector3.forward * 500f, ForceMode.VelocityChange);   
-        //myRb.AddForce(new Vector3(0,400f,0));
-        //myRb.AddForce(Vector3.forward * 500f);
-
-        myRb.velocity = new Vector3(0,100,0);
+        
 
         yield return new WaitForSeconds(.4f);
 
@@ -209,7 +207,7 @@ public class PlayerSwerwe : MonoBehaviour
 
         yield return new WaitForSeconds(.5f);
 
-        ResetPlayerPositionY2(transform, 44f); //havada uçma sorunu çözümü
+        //ResetPlayerPositionY2(transform, 44f); //havada uçma sorunu çözümü
         animJumpBool = false;
     }
 
@@ -224,18 +222,20 @@ public class PlayerSwerwe : MonoBehaviour
         {
             transform.DOMove(konum.position, 3.5f).SetEase(Ease.OutBack);
         }
-        else if (energyCount > 4 && energyCount <= 7)
+        else if (energyCount > 4 && energyCount <= 8)
         {
-            transform.DOMove(konum.position, 4.5f);
+            transform.DOMove(konum.position, 4.5f).SetEase(Ease.OutBack);
         }
-        else if (energyCount > 7 && energyCount < 20)
+        else if (energyCount > 8 && energyCount < 21)
         {
-            transform.DOMove(konum.position, 5.5f);
+            transform.DOMove(konum.position, 5.5f).SetEase(Ease.OutBack);
         }
 
         playerAnim.SetBool("flipJump", false);
 
-        //transform.DORotate(new Vector3(0, -120, 0), 2f);
+        yield return new WaitForSeconds(2f);
+
+        transform.DORotate(new Vector3(0, -350, 0), 5f);
     }
 
     public IEnumerator DelayThings(float delayTime)
@@ -290,6 +290,12 @@ public class PlayerSwerwe : MonoBehaviour
  /* playerAnim.SetBool("flipJump", true);
     DelayThings(2f);
     playerAnim.SetBool("flipJump",false);
+
+
+    //myRb.AddForce(new Vector3(0,400f,0));
+        //myRb.AddForce(Vector3.forward * 500f);
+
+        myRb.velocity = new Vector3(0,100,0);
 */    
 
   

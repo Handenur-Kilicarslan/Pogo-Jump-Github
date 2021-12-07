@@ -50,6 +50,17 @@ public class GameManager : MonoBehaviour
                 whichLevel = PlayerPrefs.GetInt("whichLevel");
 
 
+                if (PlayerPrefs.GetInt("randomLevel") > 0)
+                {
+                    whichLevel = Random.Range(0, levels.Length);
+                }
+
+                gameArea = Instantiate(levels[whichLevel].LevelObj, new Vector3(-57.03f, -6.81f, 963.0879f), Quaternion.identity);
+
+
+
+
+
                 status = GameStatus.initalize;
 
                 break;
@@ -95,6 +106,28 @@ public class GameManager : MonoBehaviour
         Debug.Log("You Win");
     }
 
+    public void Next()
+    {
+
+        whichLevel++;
+        PlayerPrefs.SetInt("whichLevel", whichLevel);
+
+        SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+
+        //SceneManager.LoadSceneAsync(SceneManager.GetActiveScene().buildIndex);
+        //buildIndex'i tutturuyotuz.
+        //Olası farklı senaryolarda -next level olmayışı gibi- sıkıntı çıkarmasın diye 
+
+        //iceCubeCount = 0;// next level için küp sayısını 0'ladım.
+        status = GameStatus.empty; // tekrar empty'e çekiyoruz.
+
+        if (whichLevel >= levels.Length)
+        {
+            whichLevel--;
+            PlayerPrefs.SetInt("randomLevel", 1);
+        }
+    }
+
 
     #region Return End Position
     //Enerji sayısına göre konum dönen fonksiyon
@@ -102,14 +135,15 @@ public class GameManager : MonoBehaviour
     {
         int n = energyCount;
 
-        endingStartPoint.position = new Vector3(0.8f, 44, 1034.24f); //1x konumu
+        endingStartPoint.position = new Vector3(0, 0, 869f); //1x konumu
 
         //i yi 2 2 arttırabilirim
 
         for (int i = 0; i < n; i++)
         {
-            endingStartPoint.position += new Vector3(0, 7.5f, 44.6f); //2şerliçıksın
+            endingStartPoint.position += new Vector3(0, 7.5f, 17f); //2şerliçıksın
 
+            endingStartPoint.position += new Vector3(0, 7.5f, 16.5f);
             //endingStartPoint.position += new Vector3(0, 7.6f, 22.3f); //iki yer arası mesafe
         }
 

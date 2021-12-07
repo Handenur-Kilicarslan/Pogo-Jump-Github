@@ -5,10 +5,10 @@ EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Scenes:
-  - enabled: 0
-    path: Assets/Scenes/Swerwe Game.unity
-    guid: 93dbff90a5d5ef24c8aeca5310ceef26
   - enabled: 1
-    path: "Assets/Buket/kopya 1 Buket cal\u0131san design.unity"
-    guid: 0a7865aac21f59a4c8f2e7dcdf57b99c
+    path: Assets/Buket/Level 1.unity
+    guid: 48daaafefb8619e41ad78b5111cc65b0
+  - enabled: 0
+    path: Assets/Buket/Level 2.unity
+    guid: f0ebc2cca3ed1ea49a44da6562a789a4
   m_configObjects: {}
