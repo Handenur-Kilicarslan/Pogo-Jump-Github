@@ -43,7 +43,9 @@ public class PlayerSwerwe : MonoBehaviour
     [SerializeField] private float swerveSpeed = 4f;
     [SerializeField] private float maxSwerveAmount = 4f;
     private SwerveInputSystem _swerveInputSystem;
-    
+
+    public GameObject releasePanel;
+
 
     private void Awake()
     {
@@ -58,6 +60,8 @@ public class PlayerSwerwe : MonoBehaviour
         tapToStart = false;
         endGame = false;
         particleConfetti.gameObject.SetActive(false);
+
+        releasePanel = UıManager.instance.releasePanel;
     }
 
     void Update()
@@ -182,6 +186,13 @@ public class PlayerSwerwe : MonoBehaviour
 
             Handheld.Vibrate();
         }
+
+        if (other.gameObject.tag == "release")
+        {
+
+            Debug.Log("RELEASE THE FUCKİNG PANEL");
+            StartCoroutine(nameof(ShowReleasePanel));
+        }
     }
 
 
@@ -235,7 +246,7 @@ public class PlayerSwerwe : MonoBehaviour
 
         yield return new WaitForSeconds(2f);
 
-        transform.DORotate(new Vector3(0, -350, 0), 5f);
+       // transform.DORotate(new Vector3(0, -350, 0), 5f);
     }
 
     public IEnumerator DelayThings(float delayTime)
@@ -247,6 +258,13 @@ public class PlayerSwerwe : MonoBehaviour
         isFlip = false;
 
         animJumpBool = false;
+    }
+
+    public IEnumerator ShowReleasePanel()
+    {
+        releasePanel.SetActive(true);
+        yield return new WaitForSeconds(2f);
+        releasePanel.SetActive(false);
     }
 
     void ResetPlayerPositionY(Transform transform)

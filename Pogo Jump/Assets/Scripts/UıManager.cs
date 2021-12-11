@@ -9,6 +9,7 @@ public class UıManager : MonoBehaviour
     public GameObject playPanel;
     public GameObject winPanel;
     public GameObject failPanel;
+    public GameObject releasePanel;
 
 
     void Start()
@@ -17,6 +18,7 @@ public class UıManager : MonoBehaviour
         playPanel.SetActive(false);
         failPanel.SetActive(false);
         winPanel.SetActive(false);
+        releasePanel.SetActive(false);
     }
 
 

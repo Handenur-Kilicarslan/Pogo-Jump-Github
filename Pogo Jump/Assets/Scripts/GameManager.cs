@@ -92,7 +92,7 @@ public class GameManager : MonoBehaviour
     public void GameOver()
     {
         UıManager.instance.FaiUI();
-        PlayerMovement.endGame = true;
+        PlayerSwerwe.endGame = true;
         FailCam.GetComponent<CinemachineVirtualCamera>().Priority = 11;
         //Fail Animasyonu
         Debug.Log("fail");
